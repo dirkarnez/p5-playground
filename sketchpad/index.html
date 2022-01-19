@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"
+        integrity="sha512-N4kV7GkNv7QR7RX9YF/olywyIgIwNvfEe2nZtfyj73HdjCUkAfOBDbcuJ/cTaN04JKRnw1YG1wnUyNKMsNgg3g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div id="sketchpad"></div>
+    </div>
+    <script>
+        const sketchpad = (p) => {
+            let canvas;
+            let drawings = [];
+            let currentPath = [];
+            let isDrawing = false;
+
+            function startPath() {
+                px = p.mouseX;
+                py = p.mouseY;
+
+                console.log("——");
+                console.log("You started a new path!");
+                isDrawing = true;
+                currentPath = [];
+                drawings.push(currentPath);
+                console.log("A new array of points is pushed in 'drawing'");
+                console.log(currentPath);
+
+            }
+
+            function endPath() {
+                console.log("You released the pen, and ended this path!");
+                console.log("There is " + drawings.length + " paths in 'drawing' now.");
+                console.log("Let see the content of the drawing array:");
+                console.log(drawings);
+                isDrawing = false;
+                console.log("You're not drawing right now");
+            }
+
+            // SETUP
+            p.setup = function () {
+                canvas = p.createCanvas(400, 400);
+                p.background(0);
+                canvas.mousePressed(startPath);
+                canvas.mouseReleased(function () {
+                    endPath();
+                });
+            }
+
+            // DRAW
+            p.draw = function () {
+                if (isDrawing) {
+                    let point = {
+                        x1: px,
+                        y1: py,
+                        x2: p.mouseX,
+                        y2: p.mouseY
+                    }
+                    currentPath.push(point);
+                    px = p.mouseX;
+                    py = p.mouseY;
+                }
+
+                //Shows the current drawing if there any data in drawing array
+                for (let i = 0; i < drawings.length; i++) {
+                    let path = drawings[i];
+                    if (drawings[i].length != 0) {
+                        // beginShape();
+                        for (let j = 0; j < path.length; j++) {
+                            p.strokeWeight(2);
+                            p.stroke(200);
+                            p.line(path[j].x1, path[j].y1, path[j].x2, path[j].y2);
+                            // vertex(path[j].x2, path[j].y2);
+                        }
+                        // endShape();
+                    }
+                }
+            }
+        };
+
+        new p5(sketchpad, "sketchpad");
+    </script>
+</body>
+</html>
